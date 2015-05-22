@@ -13,8 +13,8 @@
       $(document).ready(function(){
         var $body = $('body');
         var $tweets = $("#tweets");
-        $tweets.html('');
-
+        var start = 0;
+        var tweetSource = streams.home;
         /* Original Code... may reuse
         // $body.html('');
 
@@ -28,30 +28,13 @@
         // }
         */
 
-        // function to make other functions to update tweets array
-        var updateTweetsFor = function(handle) {
-          /*
-            returns: function that updates list for a given twitter handle. Does
-            not rebuild entire list, but prepends new entries to tweets list.
-          */
-          var $tweets;
-          var start = 0;
-          var end;
-          var source;
 
-          if (handle != undefined) {
-            $tweets = $('#'+handle);
-            source = streams.users[handle];
-          } else {
-            $tweets = $("#tweets");
-            source = streams.home;
-          }
-          return function() {
+        var updateTweets = function() {
             // get ending index when called
-            end = source.length;
+            var end = tweetSource.length;
             // loop through, update tweets
             for (var i = start; i < end; i ++) {
-              var tweet = source[i];
+              var tweet = tweetSource[i];
               var $tweet = $('<div></div>')
                             .addClass('tweet');
               var $user = $("<a></a>")
@@ -68,31 +51,16 @@
               $tweet.append($user)
                     .append($createDate)
                     .append("<p>" + tweet.message + "</p>");
-              /* TODO: So far, adding to home stream. need to be able to
-              add to individual streams */
               $tweet.prependTo($tweets);
             }
             // update next start index
             start = end;
           };
-        };
-        var update = {};
-        update.home = updateTweetsFor();
 
-        // initially create a stream/list for each user
-        (function createStreams() {
-          for (var user in streams.users) {
-            $body.append("<section id=" + user + "></section>");
-
-            // create updating function
-            update[user] = updateTweetsFor(user);
-          }
-        })();
-        update.home();
-
+        updateTweets();
         // this is just to test auto-refreshing for different lists. will delete later
         var interval = setInterval(function() {
-          update.home();
+          updateTweets();
         }, 300);
 
         setTimeout(function() {clearInterval(interval);}, 10000)
