@@ -72,6 +72,7 @@
 	border: 1px solid #F0F0F0;
 	border-radius: 15px;
 	background: #F0F0F0;
+	padding: 0 1.2em;
 }
 
 .tweets-header h2,
@@ -84,15 +85,22 @@
 	right: 0px;
 }
 
-hr {
-	display: block;
-	height: 1px;
-	border: 0;
-	border-top: 1px solid #ccc;
-	margin: 1em 0;
-	padding:0;
+/*
+	============================================================
+	Individual Tweet
+	============================================================
+*/
+
+.created-date {
+	margin: auto 10px;
 }
 
-hr:first-of-type {
-	margin-top: 0;
+.tweet {
+	height: 100%;
+	padding: 15px 0;
+	border-top: 1px solid #ccc;
+}
+
+.tweet p {
+	margin: 0;
 }
