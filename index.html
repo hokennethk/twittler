@@ -47,7 +47,8 @@
                             .addClass('tweet');
               var $user = $("<a></a>")
                           .attr("href", "#")
-                          .addClass("user " + tweet.user)
+                          .addClass("user")
+                          .data("user", tweet.user) // data used for filtering
                           .text("@" + tweet.user);
               var $createDate = $("<span></span>")
                                 .addClass("created-date")
@@ -70,7 +71,11 @@
           that user's tweets
           Returns a jQuery object with the filtered out tweets */
           // select all tweets that do not belong to the user
-          var $toHide = $tweets.find(".user").not("."+user).closest("div");
+          var $toHide = $(".user")
+                        .filter(function() {
+                          return $(this).data("user") !== user;
+                        })
+                        .closest("div");
           $toHide.hide(1000);
           return $toHide;
         };
@@ -83,10 +88,21 @@
         updateTweets();
 
         // Refresh Button
+
         $(".tweets-header").on('click', 'button', function() {
           $tweets.hide();
           updateTweets();
+          showAll();
           $tweets.fadeIn(1000);
+          // reset button text
+          $(this).text("Refresh");
+        });
+
+        // filter user
+        $('#tweets').on('click', '.user', function() {
+          filterTweets($(this).data("user"));
+          // change button text
+          $(".tweets-header").children("button").text("Back")
         });
 
         // this section is for testing
