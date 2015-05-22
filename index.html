@@ -28,20 +28,30 @@
         // }
         */
 
-        // function constructor to update tweets array
+        // function to make other functions to update tweets array
         var updateTweetsFor = function(handle) {
           /*
             returns: function that updates list for a given twitter handle. Does
             not rebuild entire list, but prepends new entries to tweets list.
           */
+          var $tweets;
           var start = 0;
           var end;
+          var source;
+
+          if (handle != undefined) {
+            $tweets = $('#'+handle);
+            source = streams.users[handle];
+          } else {
+            $tweets = $("#tweets");
+            source = streams.home;
+          }
           return function() {
             // get ending index when called
-            end = streams.home.length;
+            end = source.length;
             // loop through, update tweets
             for (var i = start; i < end; i ++) {
-              var tweet = streams.home[i];
+              var tweet = source[i];
               var $tweet = $('<div></div>');
               $tweet.text('@' + tweet.user + ': ' + tweet.message);
               /* TODO: So far, adding to home stream. need to be able to
@@ -52,13 +62,25 @@
             start = end;
           };
         };
-        var updateHome = updateTweetsFor();
-        updateHome();
+        var update = {};
+        update.home = updateTweetsFor();
 
+        // initially create a stream/list for each user
+        (function createStreams() {
+          for (var user in streams.users) {
+            $body.append("<section id=" + user + "></section>");
 
-        // this is just to test auto-refreshing home
+            // create updating function
+            update[user] = updateTweetsFor(user);
+          }
+        })();
+        update.home();
+
+        // this is just to test auto-refreshing for different lists. will delete later
         setInterval(function() {
-          updateHome();
+          update.home();
+          update.mracus();
+          update.shawndrost();
         }, 300)
 
       });
