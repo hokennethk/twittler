@@ -4,12 +4,30 @@
 	============================================================
 */
 
-/* Container to hold elements, apply similar properties */
+/* Container: Set width of entire grid */
 .container {
-	max-width: 960px;
+	max-width: 1200px;
 	margin: 0 auto;
 	padding-left: 30px;
 	padding-right: 30px;
+}
+
+/* Row: keep columns inside it from overflowing onto other rows */
+.row {
+	background: #F0F0F0;
+}
+
+/* columns: 1/3 and 2/3 of screen */
+.col-1-3 {
+	width: 33.33%;
+}
+
+.col-2-3 {
+	width: 66.66%;
+}
+
+.col-3-3 {
+	width: 100%;
 }
 
 
@@ -25,9 +43,21 @@
 	top: 0;
 	height: 50px;
 	background: #FFF;
+	z-index: 1;
 }
 
 .title {
 	text-align: center;
 	margin: 10px 0;
+}
+
+/*
+	============================================================
+	Main
+	============================================================
+*/
+
+.main {
+	position: relative;
+	top: 30px;
 }
