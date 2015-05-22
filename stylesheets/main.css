@@ -59,5 +59,15 @@
 
 .main {
 	position: relative;
-	top: 30px;
+	top: 50px;
+}
+
+.tweets-header h2,
+.tweets-header button {
+	display: inline-block;
+}
+
+.tweets-header button {
+	position: absolute;
+	right: 0px;
 }
