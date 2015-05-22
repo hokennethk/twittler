@@ -8,6 +8,7 @@ html {
 
 body {
 	background: url("../img/background.jpg") no-repeat center center fixed;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 /*
 	============================================================
@@ -83,8 +84,9 @@ body {
 .tweets {
 	border: 1px solid #F0F0F0;
 	border-radius: 15px;
-	background: rgba(240, 240, 240, 0.9);
+	background: rgba(255, 255, 255, 0.9);
 	padding: 0 1.2em;
+	margin: 25px 0;
 }
 
 .tweets-header {
@@ -102,7 +104,7 @@ body {
 	right: 20px;
 	top: 0;
 	bottom: 0;
-	margin: .7em 0;
+	margin: .5em 0;
 }
 
 /*
@@ -135,7 +137,7 @@ body {
   color: #ffffff;
   font-size: 16px;
   background: #3498db;
-  padding: 10px 20px 10px 20px;
+  padding: 0.5em 20px;
   text-decoration: none;
   border: none;
   border-radius: 5px;
@@ -144,4 +146,33 @@ body {
 .btn:hover {
   background: #3cb0fd;
   text-decoration: none;
+}
+
+/*
+	============================================================
+	Typography
+	============================================================
+*/
+
+a {
+	color: #000;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+.tweet a {
+	font-weight: bold;
+}
+
+.created-date {
+	color: #a9a9a9;
+	font-size: 0.85em;
+}
+
+h2 {
+	font-weight: 200;
+	line-height: 12px;
 }
