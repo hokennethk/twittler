@@ -1,0 +1,33 @@
+/*
+	============================================================
+	Grid
+	============================================================
+*/
+
+/* Container to hold elements, apply similar properties */
+.container {
+	max-width: 960px;
+	margin: 0 auto;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+
+/*
+	============================================================
+	Header
+	============================================================
+*/
+
+.primary-header {
+	width: 100%;
+	position: fixed;
+	top: 0;
+	height: 50px;
+	background: #FFF;
+}
+
+.title {
+	text-align: center;
+	margin: 10px 0;
+}
