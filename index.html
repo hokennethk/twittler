@@ -7,8 +7,14 @@
     <script src="data_generator.js"></script>
   </head>
   <body>
-    <section id="tweets">
-      <!-- Dynamically created in scripts -->
+    <section id="main">
+      <div class="tweets-header">
+        <h2>Tweets</h2>
+        <button>Refresh</button>
+      </div>
+      <div id="tweets">
+        <!-- Dynamically created in scripts -->
+      </div>
     </section>
     <script>
 
@@ -76,15 +82,22 @@
 
         updateTweets();
 
-        // this section is for testing
-        var interval = setInterval(function() {
+        // Refresh Button
+        $(".tweets-header").on('click', 'button', function() {
+          $tweets.hide();
           updateTweets();
-        }, 300);
+          $tweets.fadeIn(1000);
+        });
 
-        setTimeout(function() {
-          clearInterval(interval);
-          // filterTweets("mracus");
-        }, 10000);
+        // this section is for testing
+        // var interval = setInterval(function() {
+        //   updateTweets();
+        // }, 300);
+
+        // setTimeout(function() {
+        //   clearInterval(interval);
+        //   // filterTweets("mracus");
+        // }, 10000);
 
       });
 
