@@ -57,13 +57,27 @@
             start = end;
           };
 
+        var filterTweets = function(user) {
+          /* takes a user and filters the home tweets to only show
+          that user's tweets
+          Returns a jQuery object with the filtered out tweets */
+          // select all tweets that do not belong to the user
+          var $toHide = $tweets.find(".user").not("."+user).closest("div");
+          $toHide.hide(1000);
+          return $toHide;
+        };
+
         updateTweets();
-        // this is just to test auto-refreshing for different lists. will delete later
+
+        // this section is for testing
         var interval = setInterval(function() {
           updateTweets();
         }, 300);
 
-        setTimeout(function() {clearInterval(interval);}, 10000)
+        setTimeout(function() {
+          clearInterval(interval);
+          // filterTweets("mracus");
+        }, 10000);
 
       });
 
