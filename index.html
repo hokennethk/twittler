@@ -13,7 +13,7 @@
       </header>
 
       <div class="row main">
-        <section class="col-3-3">
+        <section class="tweets col-3-3">
           <div class="tweets-header">
             <h2>Tweets</h2>
             <button>Refresh</button>
@@ -50,7 +50,7 @@
               // loop through, update tweets
               for (var i = start; i < end; i ++) {
                 var tweet = tweetSource[i];
-                var $tweet = $('<div></div>')
+                var $tweet = $('<div><hr></div>')
                               .addClass('tweet');
                 var $user = $("<a></a>")
                             .attr("href", "#")
