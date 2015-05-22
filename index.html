@@ -52,8 +52,22 @@
             // loop through, update tweets
             for (var i = start; i < end; i ++) {
               var tweet = source[i];
-              var $tweet = $('<div></div>');
-              $tweet.text('@' + tweet.user + ': ' + tweet.message);
+              var $tweet = $('<div></div>')
+                            .addClass('tweet');
+              var $user = $("<a></a>")
+                          .attr("href", "#")
+                          .addClass("user " + tweet.user)
+                          .text("@" + tweet.user);
+              var $createDate = $("<span></span>")
+                                .addClass("created-date")
+                                .text(tweet.created_at.toLocaleString());
+              var $msg = $("<p></p>")
+                          .addClass("tweet-message")
+                          .text(tweet.message);
+              // build tweet
+              $tweet.append($user)
+                    .append($createDate)
+                    .append("<p>" + tweet.message + "</p>");
               /* TODO: So far, adding to home stream. need to be able to
               add to individual streams */
               $tweet.prependTo($tweets);
@@ -77,11 +91,11 @@
         update.home();
 
         // this is just to test auto-refreshing for different lists. will delete later
-        setInterval(function() {
+        var interval = setInterval(function() {
           update.home();
-          update.mracus();
-          update.shawndrost();
-        }, 300)
+        }, 300);
+
+        setTimeout(function() {clearInterval(interval);}, 10000)
 
       });
 
