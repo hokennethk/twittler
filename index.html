@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <header class="primary-header row">
-        <h1 class="title">#Twittler</h1>
+        <h1 class="title"><a href="#">#Twittler</a></h1>
       </header>
 
       <div class="row main">
@@ -95,7 +95,6 @@
           updateTweets();
 
           // Refresh Button
-
           $(".tweets-header").on('click', 'button', function() {
             $tweets.hide();
             updateTweets();
@@ -105,12 +104,25 @@
             $(this).text("Refresh");
           });
 
+          // callback function for scroll to top
+          var scrollTop = function(e) {
+            e.preventDefault();
+            $('html, body').animate({
+              scrollTop: 0
+            }, 800);
+          };
+
           // filter user
-          $('#tweets').on('click', '.user', function() {
+          $('#tweets').on('click', '.user', function(e) {
+            scrollTop(e);
             filterTweets($(this).data("user"));
             // change button text
-            $(".tweets-header").children("button").text("Back")
+            $(".tweets-header").children("button").text("Back");
           });
+
+          // bind scroll to top
+          $(".primary-header").on('click', '.title', scrollTop);
+
 
           // this section is for testing
           // var interval = setInterval(function() {
