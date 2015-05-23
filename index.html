@@ -13,13 +13,17 @@
       </header>
 
       <div class="row main">
-        <section class="tweets col-3-3">
+        <section class="user-col col-1-3">
+          <h3 class="user-name">Home</h3>
+        </section>
+
+        <section class="tweets col-2-3">
           <div class="tweets-header">
             <h2>Tweets</h2>
             <button class="btn">Refresh</button>
           </div>
           <div id="tweets">
-            <!-- Dynamically created in scripts -->
+            <!-- Dynamically created -->
           </div>
         </section>
       </div>
@@ -28,7 +32,9 @@
         $(document).ready(function(){
           var $body = $('body');
           var $tweets = $("#tweets");
-          var $main = $("div.main")
+          var $main = $("div.main");
+          var $userCol = $(".user-col");
+          var currentUser;
           var start = 0;
           var tweetSource = streams.home;
           /* Original Code... may reuse
@@ -74,10 +80,18 @@
               start = end;
             };
 
+          // update user column
+          var updateUser = function(user) {
+            $(".user-name").fadeOut(500, function () {
+              $(this).text(user);
+              $(this).fadeIn(500);
+            });
+          };
+
           var filterTweets = function(user) {
             /* takes a user and filters the home tweets to only show
             that user's tweets
-            Returns a jQuery object with the filtered out tweets */
+            Returns user passed in */
             // select all tweets that do not belong to the user
             var $toHide = $(".user")
                           .filter(function() {
@@ -87,23 +101,22 @@
             $toHide.addClass("hide");
 
             // changes to tweets header
-            $('.tweets-header').find("h2").text("Tweets for " + user);
             $('.tweets-header').find("button").text("Back").addClass("btn-alt");
-            return $toHide;
+            return user;
           };
 
           var showAll = function() {
             /* displays all tweets */
             $tweets.find(".user").closest("div").removeClass("hide");
             // reset tweets header
-            $('.tweets-header').find("h2").text("Tweets");
             $('.tweets-header').find("button").text("Refresh").removeClass("btn-alt");
+            // reset user-col
           };
 
           updateTweets();
 
           // Refresh Button
-          $main.on('click', 'button', function(e) {
+          $('.tweets').on('click', 'button', function(e) {
             // $main.addClass("hide");
             $(e.delegateTarget).addClass("refresh")
                                 .delay(500)
@@ -113,6 +126,7 @@
                                   $(this).removeClass("refresh");
                                   $(this).dequeue();
                                 });
+            updateUser("Home");
           });
 
           // callback function for scroll to top
@@ -124,31 +138,22 @@
           };
 
           // filter user
-          $main.on('click', '.user', function(e) {
+          $('.tweets').on('click', '.user', function(e) {
             scrollTop(e);
-            var $user = $(this)
+            var username = $(this).data("user");
             $(e.delegateTarget).addClass("refresh")
                                 .delay(500)
                                 .queue(function () {
-                                  filterTweets($user.data("user"));
+                                  // filter tweets and set currentUser
+                                  currentUser = filterTweets(username);
                                   $(this).removeClass("refresh");
                                   $(this).dequeue();
                                 });
+            updateUser("@" + username);
           });
 
           // bind scroll to top
           $(".primary-header").on('click', '.title', scrollTop);
-
-
-          // this section is for testing
-          // var interval = setInterval(function() {
-          //   updateTweets();
-          // }, 300);
-
-          // setTimeout(function() {
-          //   clearInterval(interval);
-          //   // filterTweets("mracus");
-          // }, 10000);
 
         });
 
