@@ -28,6 +28,7 @@
         $(document).ready(function(){
           var $body = $('body');
           var $tweets = $("#tweets");
+          var $main = $("div.main")
           var start = 0;
           var tweetSource = streams.home;
           /* Original Code... may reuse
@@ -83,23 +84,29 @@
                             return $(this).data("user") !== user;
                           })
                           .closest("div");
-            $toHide.hide(1000);
+            $toHide.addClass("hide");
             return $toHide;
           };
 
           var showAll = function() {
             /* displays all tweets */
-            $tweets.find(".user").closest("div").show(1000);
+            $tweets.find(".user").closest("div").removeClass("hide");
           };
 
           updateTweets();
 
           // Refresh Button
-          $(".tweets-header").on('click', 'button', function() {
-            $tweets.hide();
-            updateTweets();
-            showAll();
-            $tweets.fadeIn(1000);
+          $main.on('click', 'button', function(e) {
+            // $main.addClass("hide");
+            $(e.delegateTarget).addClass("refresh")
+                                .delay(500)
+                                .queue(function () {
+                                  updateTweets();
+                                  showAll();
+                                  $(this).removeClass("refresh");
+                                  $(this).dequeue();
+                                });
+
             // reset button text
             $(this).text("Refresh");
           });
@@ -113,9 +120,16 @@
           };
 
           // filter user
-          $('#tweets').on('click', '.user', function(e) {
+          $main.on('click', '.user', function(e) {
             scrollTop(e);
-            filterTweets($(this).data("user"));
+            var $user = $(this)
+            $(e.delegateTarget).addClass("refresh")
+                                .delay(500)
+                                .queue(function () {
+                                  filterTweets($user.data("user"));
+                                  $(this).removeClass("refresh");
+                                  $(this).dequeue();
+                                });
             // change button text
             $(".tweets-header").children("button").text("Back");
           });
