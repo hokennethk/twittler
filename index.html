@@ -85,12 +85,19 @@
                           })
                           .closest("div");
             $toHide.addClass("hide");
+
+            // changes to tweets header
+            $('.tweets-header').find("h2").text("Tweets for " + user);
+            $('.tweets-header').find("button").text("Back").addClass("btn-alt");
             return $toHide;
           };
 
           var showAll = function() {
             /* displays all tweets */
             $tweets.find(".user").closest("div").removeClass("hide");
+            // reset tweets header
+            $('.tweets-header').find("h2").text("Tweets");
+            $('.tweets-header').find("button").text("Refresh").removeClass("btn-alt");
           };
 
           updateTweets();
@@ -106,9 +113,6 @@
                                   $(this).removeClass("refresh");
                                   $(this).dequeue();
                                 });
-
-            // reset button text
-            $(this).text("Refresh");
           });
 
           // callback function for scroll to top
@@ -130,8 +134,6 @@
                                   $(this).removeClass("refresh");
                                   $(this).dequeue();
                                 });
-            // change button text
-            $(".tweets-header").children("button").text("Back");
           });
 
           // bind scroll to top

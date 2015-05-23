@@ -168,6 +168,13 @@ body {
   text-decoration: none;
 }
 
+.btn-alt {
+	background: rgb(255, 49, 49);
+}
+
+.btn-alt:hover {
+	background: #f00;
+}
 /*
 	============================================================
 	Typography
