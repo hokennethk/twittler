@@ -28,84 +28,75 @@
         </section>
       </div>
       <script>
-
-        $(document).ready(function(){
-          var $body = $('body');
+        $(document).ready(function () {
           var $tweets = $("#tweets");
-          var $main = $("div.main");
-          var $userCol = $(".user-col");
-          var currentUser;
-          var start = 0;
+          var index = 0;
           var tweetSource = streams.home;
-          /* Original Code... may reuse
-          // $body.html('');
 
-          // var index = streams.home.length - 1;
-          // while(index >= 0){
-          //   var tweet = streams.home[index];
-          //   var $tweet = $('<div></div>');
-          //   $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          //   $tweet.appendTo($tweets);
-          //   index -= 1;
-          // }
-          */
-
-
-          var updateTweets = function() {
-              // get ending index when called
-              var end = tweetSource.length;
-              // loop through, update tweets
-              for (var i = start; i < end; i ++) {
-                var tweet = tweetSource[i];
-                var $tweet = $('<div></div>')
-                              .addClass('tweet');
-                var $user = $("<a></a>")
-                            .attr("href", "#")
-                            .addClass("user")
-                            .data("user", tweet.user) // data used for filtering
-                            .text("@" + tweet.user);
-                var $createDate = $("<span></span>")
-                                  .addClass("created-date")
-                                  .text(tweet.created_at.toLocaleString());
-                var $msg = $("<p></p>")
-                            .addClass("tweet-message")
-                            .text(tweet.message);
-                // build tweet
-                $tweet.append($user)
-                      .append($createDate)
-                      .append("<p>" + tweet.message + "</p>");
-                $tweet.prependTo($tweets);
-              }
-              // update next start index
-              start = end;
-            };
-
-          // update user column
-          var updateUser = function(user) {
-            $(".user-name").fadeOut(500, function () {
-              $(this).text(user);
-              $(this).fadeIn(500);
-            });
+          var updateTweets = function () {
+            /*
+              Function to grab additional tweets from the stream.
+              Builds individual tweet and adds to list of tweets
+            */
+            // get ending index when called
+            var end = tweetSource.length;
+            var tweet, $tweet, $user, $createDate, $msg;
+            // loop through, update tweets
+            while (index < end) {
+              tweet = tweetSource[index];
+              $tweet = $('<div></div>').addClass('tweet');
+              $user = $("<a></a>")
+                .attr("href", "#")
+                .addClass("user")
+                .data("user", tweet.user) // data used for filtering
+                .text("@" + tweet.user);
+              $createDate = $("<span></span>")
+                .addClass("created-date")
+                .text(tweet.created_at.toLocaleString());
+              $msg = $("<p></p>")
+                .addClass("tweet-message")
+                .text(tweet.message);
+              // build tweet
+              $tweet.append($user)
+                .append($createDate)
+                .append($msg);
+              $tweet.prependTo($tweets);
+              index += 1;
+            }
+            // update next start index
+            index = end;
           };
 
-          var filterTweets = function(user) {
-            /* takes a user and filters the home tweets to only show
-            that user's tweets
-            Returns user passed in */
+          var updateUser = function (user) {
+            /* Updates username in user-col if username should change */
+            var current = $(".user-name").text();
+            if (current !== user) {
+              $(".user-name").fadeOut(500, function () {
+                $(this).text(user);
+                $(this).fadeIn(500);
+              });
+            }
+          };
+
+          var filterTweets = function (user) {
+            /*
+              takes a user and filters the home tweets to only show
+              that user's tweets
+              Returns user passed in
+            */
             // select all tweets that do not belong to the user
-            var $toHide = $(".user")
-                          .filter(function() {
-                            return $(this).data("user") !== user;
-                          })
-                          .closest("div");
-            $toHide.addClass("hide");
+            $(".user").filter(function () {
+                return $(this).data("user") !== user;
+              })
+              .closest("div")
+              .addClass("hide");
 
             // changes to tweets header
             $('.tweets-header').find("button").text("Back").addClass("btn-alt");
             return user;
           };
 
-          var showAll = function() {
+          var showAll = function () {
             /* displays all tweets */
             $tweets.find(".user").closest("div").removeClass("hide");
             // reset tweets header
@@ -113,50 +104,53 @@
             // reset user-col
           };
 
-          updateTweets();
+          // jQuery plugin to refresh
+          $.fn.refresh = function (queuedFunctions) {
+            $(this).addClass("refresh").delay(500).queue(function () {
+              queuedFunctions();
+              $(this).removeClass("refresh");
+              $(this).dequeue();
+            });
+          };
 
-          // Refresh Button
-          $('.tweets').on('click', 'button', function(e) {
-            // $main.addClass("hide");
-            $(e.delegateTarget).addClass("refresh")
-                                .delay(500)
-                                .queue(function () {
-                                  updateTweets();
-                                  showAll();
-                                  $(this).removeClass("refresh");
-                                  $(this).dequeue();
-                                });
-            updateUser("Home");
-          });
-
-          // callback function for scroll to top
-          var scrollTop = function(e) {
+          var scrollTop = function (e) {
+            /* Scrolls user back to top */
             e.preventDefault();
             $('html, body').animate({
               scrollTop: 0
             }, 800);
           };
 
+          /*
+            ============================================================
+            Event Handlers
+            ============================================================
+          */
+          // Refresh Button
+          $('.tweets').on('click', 'button', function (e) {
+            $(e.delegateTarget).refresh(function () {
+              updateTweets();
+              showAll();
+            });
+            updateUser("Home");
+          });
+
           // filter user
-          $('.tweets').on('click', '.user', function(e) {
+          $('.tweets').on('click', '.user', function (e) {
             scrollTop(e);
             var username = $(this).data("user");
-            $(e.delegateTarget).addClass("refresh")
-                                .delay(500)
-                                .queue(function () {
-                                  // filter tweets and set currentUser
-                                  currentUser = filterTweets(username);
-                                  $(this).removeClass("refresh");
-                                  $(this).dequeue();
-                                });
+            $(e.delegateTarget).refresh(function () {
+              filterTweets(username);
+            });
             updateUser("@" + username);
           });
 
-          // bind scroll to top
+          // scroll to top
           $(".primary-header").on('click', '.title', scrollTop);
 
+          // initial run
+          updateTweets();
         });
-
       </script>
     </div>
   </body>
