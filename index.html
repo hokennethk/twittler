@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <script src="moment.js"></script>
   </head>
   <body>
     <div class="container">
@@ -33,11 +34,11 @@
           var index = 0;
           var tweetSource = streams.home;
 
+          /*
+            Grab additional tweets from the stream.
+            Builds individual tweet and adds to list of tweets
+          */
           var updateTweets = function () {
-            /*
-              Function to grab additional tweets from the stream.
-              Builds individual tweet and adds to list of tweets
-            */
             // get ending index when called
             var end = tweetSource.length;
             var tweet, $tweet, $user, $createDate, $msg;
@@ -52,11 +53,12 @@
                 .text("@" + tweet.user);
               $createDate = $("<span></span>")
                 .addClass("created-date")
-                .text(tweet.created_at.toLocaleString());
+                .data("moment", moment(tweet.created_at))
+                .text(moment(tweets.created_at).fromNow());
               $msg = $("<p></p>")
                 .addClass("tweet-message")
                 .text(tweet.message);
-              // build tweet
+              // build tweet and add
               $tweet.append($user)
                 .append($createDate)
                 .append($msg);
@@ -67,8 +69,8 @@
             index = end;
           };
 
+          // updates the displayed username in the user-col
           var updateUser = function (user) {
-            /* Updates username in user-col if username should change */
             var current = $(".user-name").text();
             if (current !== user) {
               $(".user-name").fadeOut(500, function () {
@@ -78,13 +80,9 @@
             }
           };
 
+          // filter tweets for a given user
           var filterTweets = function (user) {
-            /*
-              takes a user and filters the home tweets to only show
-              that user's tweets
-              Returns user passed in
-            */
-            // select all tweets that do not belong to the user
+            // hide all tweets that do not belong to the user
             $(".user").filter(function () {
                 return $(this).data("user") !== user;
               })
@@ -96,60 +94,74 @@
             return user;
           };
 
+          // displays all user tweets
           var showAll = function () {
-            /* displays all tweets */
             $tweets.find(".user").closest("div").removeClass("hide");
             // reset tweets header
             $('.tweets-header').find("button").text("Refresh").removeClass("btn-alt");
-            // reset user-col
           };
 
-          // jQuery plugin to refresh
+          // jQuery plugin to refresh (queue animation)
           $.fn.refresh = function (queuedFunctions) {
-            $(this).addClass("refresh").delay(500).queue(function () {
-              queuedFunctions();
-              $(this).removeClass("refresh");
-              $(this).dequeue();
-            });
+            $(this).addClass("refresh")
+              .delay(500)
+              .queue(function () {
+                queuedFunctions();
+                $(this).removeClass("refresh");
+                $(this).dequeue();
+              });
           };
 
+          // animated scroll to top
           var scrollTop = function (e) {
-            /* Scrolls user back to top */
             e.preventDefault();
             $('html, body').animate({
               scrollTop: 0
             }, 800);
           };
 
+          // refresh relative date
+          var refreshDate = function() {
+            $('.created-date').each(function() {
+              $(this).text($(this).data('moment').fromNow());
+            })
+          };
           /*
             ============================================================
             Event Handlers
             ============================================================
           */
-          // Refresh Button
+          // Refresh Button (updates and shows tweets)
           $('.tweets').on('click', 'button', function (e) {
             $(e.delegateTarget).refresh(function () {
               updateTweets();
+              refreshDate();
               showAll();
             });
             updateUser("Home");
           });
 
-          // filter user
+          // filter user & update username on click
           $('.tweets').on('click', '.user', function (e) {
             scrollTop(e);
             var username = $(this).data("user");
             $(e.delegateTarget).refresh(function () {
               filterTweets(username);
+              refreshDate();
             });
             updateUser("@" + username);
           });
 
-          // scroll to top
+          // scroll to top on click
           $(".primary-header").on('click', '.title', scrollTop);
 
-          // initial run
+          // initial run on first page load
           updateTweets();
+
+          // auto-update displayed times every minute
+          setInterval(function() {
+            refreshDate();
+          }, 60000);
         });
       </script>
     </div>
